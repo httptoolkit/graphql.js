@@ -68,7 +68,16 @@
         response.setEncoding('utf8')
         response.on('data', function (chunk) { str += chunk })
         response.on('end', function () {
-          callback(JSON.parse(str), response.statusCode)
+          try {
+            callback(JSON.parse(str), response.statusCode)
+          }
+          catch (e) {
+            if (typeof onRequestError === 'function') {
+              onRequestError(e);
+            } else {
+              throw e;
+            }
+          }
         })
       })
       if (typeof onRequestError === 'function') {
